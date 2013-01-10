@@ -1,0 +1,42 @@
+#!/usr/bin/env php
+<?php
+
+include_once __DIR__ . '/../vendor/autoload.php';
+
+use Buzz\Browser;
+use Buzz\Client\Curl;
+use Endurance\GarminConnect\GarminConnectClient;
+
+if (!is_file(__DIR__ . '/../config.json')) {
+    echo "The config.json file was not found. Have you created a copy of config.json.default?\n";
+    exit(1);
+}
+
+$config = json_decode(file_get_contents(__DIR__ . '/../config.json'), true);
+if (!isset($config['lastActivity'])) {
+    $config['lastActivity'] = 0;
+}
+
+$browser = new Browser(new Curl());
+
+try {
+    $client = new GarminConnectClient($browser, $config['username'], $config['password']);
+
+    $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator('/Volumes/GARMIN/Garmin/Activities', RecursiveDirectoryIterator::SKIP_DOTS));
+    foreach ($files as $file) {
+        if ($file->getMTime() > $config['lastActivity']) {
+            echo sprintf('Uploading %s', $file->getFilename());
+            $result = $client->uploadActivity($file->getPathname());
+            if (isset($result['detailedImportResult']['failures']) && count($result['detailedImportResult']['failures']) > 0) {
+                echo sprintf(' (Failed: "%s")', $result['detailedImportResult']['failures'][0]['messages'][0]['content']);
+            }
+            echo "\n";
+        }
+    }
+
+    $config['lastActivity'] = $file->getMTime();
+    file_put_contents(__DIR__ . '/../config.json', json_encode($config, JSON_FORCE_OBJECT));
+} catch (RuntimeException $exception) {
+    echo sprintf("Error: %s\n", $exception->getMessage());
+    exit(1);
+}

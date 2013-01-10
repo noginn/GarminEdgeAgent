@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+    <dict>
+        <key>Label</key>
+        <string>garmin-edge-agent</string>
+
+        <key>ProgramArguments</key>
+        <array>
+            <string>/path/to/garmin-edge-agent/bin/agent</string>
+        </array>
+
+        <key>StartOnMount</key>
+        <true/>
+
+        <key>WatchPaths</key>
+        <array>
+            <string>/Volumes/GARMIN/Garmin/Activities/</string>
+        </array>
+    </dict>
+</plist>
