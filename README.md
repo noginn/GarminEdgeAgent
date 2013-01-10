@@ -44,14 +44,3 @@ To-do
 * Easier installation/configuration
 * Keep a backup of *.fit files locally
 * Automatically upload to Strava
-
-FAQ
----
-
-Why PHP?
-~~~~~~~~
-Why not?
-
-When will it support Windows?
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-When someone kindly sends me a pull request.
