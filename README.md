@@ -1,9 +1,7 @@
 Garmin Edge Agent
 =================
 
-A simple script to automatically upload activities to Garmin Connect when you plug in your Edge via USB.
-
-Only working with OS X at the moment.
+A Mac OS X LaunchAgent to automatically update activities from a Garmin Edge to Garmin Connect
 
 How to install
 --------------
