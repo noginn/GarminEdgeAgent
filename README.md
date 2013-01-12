@@ -1,7 +1,7 @@
 Garmin Edge Agent
 =================
 
-A Mac OS X LaunchAgent to automatically update activities from a Garmin Edge to Garmin Connect
+A Mac OS X LaunchAgent to automatically upload activities from a Garmin Edge to Garmin Connect and/or Strava.
 
 How to install
 --------------
@@ -17,9 +17,19 @@ Create your config file
     
     cp config.json.default config.json
 
-Fill in your username and password for Garmin Connect in the config, for example:
+Fill in your username and password for Garmin Connect/Strava in the config, for example:
 
-    {"username": "tom", "password": "qwerty"}
+    {
+        "garmin": {
+            "username": "tom",
+            "password": "qwerty"
+        },
+        "strava": {
+            "email": "tom@test.com",
+            "password": "qwerty"
+        }
+    }
+
 
 Copy the agent file
     
