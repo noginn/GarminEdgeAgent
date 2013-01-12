@@ -1,4 +1,10 @@
 {
-    "username": "",
-    "password": ""
+    "garmin": {
+        "username": "",
+        "password": ""
+    },
+    "strava": {
+        "email": "",
+        "password": ""
+    }
 }
