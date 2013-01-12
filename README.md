@@ -53,4 +53,3 @@ To-do
 
 * Easier installation/configuration
 * Keep a backup of *.fit files locally
-* Automatically upload to Strava
