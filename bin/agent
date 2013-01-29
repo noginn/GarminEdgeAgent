@@ -8,14 +8,23 @@ use Buzz\Client\Curl;
 use Endurance\GarminConnect\GarminConnectClient;
 use Endurance\Strava\StravaClient;
 
-if (!is_file(__DIR__ . '/../config.json')) {
+$path = $_SERVER['HOME'] . '/.garmin-edge-agent';
+$configPath = $path . '/config.json';
+$logPath = $path . '/log';
+
+if (!is_file($configPath)) {
     echo "The config.json file was not found. Have you created a copy of config.json.default?\n";
     exit(1);
 }
 
-$config = json_decode(file_get_contents(__DIR__ . '/../config.json'), true);
+$config = json_decode(file_get_contents($configPath), true);
 if (!isset($config['lastActivity'])) {
     $config['lastActivity'] = 0;
+}
+
+function logInfo($file, $message) {
+    file_put_contents($file, $message, FILE_APPEND);
+    echo $message;
 }
 
 try {
@@ -33,40 +42,41 @@ try {
     foreach ($files as $file) {
         if ($file->getMTime() > $config['lastActivity']) {
             if (isset($config['garmin'])) {
-                echo sprintf('Uploading %s to Garmin Connect', $file->getFilename());
+                logInfo($logPath, sprintf('Uploading %s to Garmin Connect', $file->getFilename()));
                 try {
                     $result = $garminClient->uploadActivity($file->getPathname());
                     if (isset($result['detailedImportResult']['failures']) && count($result['detailedImportResult']['failures']) > 0) {
-                        echo sprintf(' (Failed: "%s")', $result['detailedImportResult']['failures'][0]['messages'][0]['content']);
+                        logInfo($logPath, sprintf(' (Failed: "%s")', $result['detailedImportResult']['failures'][0]['messages'][0]['content']));
                     }
                 } catch (\RuntimeException $exception) {
-                    echo sprintf(' (Failed: "%s")', $exception->getMessage());
+                    logInfo($logPath, sprintf(' (Failed: "%s")', $exception->getMessage()));
                 }
-                echo "\n";
+                logInfo($logPath, "\n");
             }
 
             if (isset($config['strava'])) {
-                echo sprintf('Uploading %s to Strava', $file->getFilename());
+                logInfo($logPath, sprintf('Uploading %s to Strava', $file->getFilename()));
                 try {
                     $result = $stravaClient->uploadActivity($file->getPathname());
                     if (isset($result['upload_id'])) {
-                        echo sprintf(' (ID: %s)', $result['upload_id']);
+                        logInfo($logPath, sprintf(' (ID: %s)', $result['upload_id']));
                     } else {
-                        echo ' (Failed)';
+                        logInfo($logPath, ' (Failed)');
+                        var_dump($result);
                     }
                 } catch (\RuntimeException $exception) {
-                    echo sprintf(' (Failed: "%s")', $exception->getMessage());
+                    logInfo($logPath, sprintf(' (Failed: "%s")', $exception->getMessage()));
                 }
 
-                echo "\n";
+                logInfo($logPath, "\n");
             }
 
             $config['lastActivity'] = $file->getMTime();
         }
     }
 
-    file_put_contents(__DIR__ . '/../config.json', json_encode($config, JSON_FORCE_OBJECT));
+    file_put_contents($configPath, json_encode($config, JSON_FORCE_OBJECT));
 } catch (RuntimeException $exception) {
-    echo sprintf("Error: %s\n", $exception->getMessage());
+    logInfo($logPath, sprintf("Error: %s\n", $exception->getMessage()));
     exit(1);
 }

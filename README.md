@@ -15,7 +15,7 @@ Install dependencies using Composer (http://getcomposer.org/doc/00-intro.md#inst
 
 Create your config file
     
-    cp config.json.default config.json
+    cp config.json.default ~/.garmin-edge-agent/config.json
 
 Fill in your username and password for Garmin Connect/Strava in the config, for example:
 
