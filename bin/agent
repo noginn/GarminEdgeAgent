@@ -37,7 +37,7 @@ try {
         $stravaClient = new StravaClient(new Browser(new Curl()));
         $stravaClient->signIn($config['strava']['email'], $config['strava']['password']);
     }
-    
+
     $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator('/Volumes/GARMIN/Garmin/Activities', RecursiveDirectoryIterator::SKIP_DOTS));
     foreach ($files as $file) {
         if ($file->getMTime() > $config['lastActivity']) {
@@ -58,11 +58,10 @@ try {
                 logInfo($logPath, sprintf('Uploading %s to Strava', $file->getFilename()));
                 try {
                     $result = $stravaClient->uploadActivity($file->getPathname());
-                    if (isset($result['upload_id'])) {
-                        logInfo($logPath, sprintf(' (ID: %s)', $result['upload_id']));
+                    if (isset($result['id']) && !isset($result['error'])) {
+                        logInfo($logPath, sprintf(' (ID: %s)', $result['id']));
                     } else {
-                        logInfo($logPath, ' (Failed)');
-                        var_dump($result);
+                        logInfo($logPath, sprintf(' (Failed: "%s")', $result['error']));
                     }
                 } catch (\RuntimeException $exception) {
                     logInfo($logPath, sprintf(' (Failed: "%s")', $exception->getMessage()));
