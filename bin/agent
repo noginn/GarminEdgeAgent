@@ -58,10 +58,10 @@ try {
                 logInfo($logPath, sprintf('Uploading %s to Strava', $file->getFilename()));
                 try {
                     $result = $stravaClient->uploadActivity($file->getPathname());
-                    if (isset($result['id']) && !isset($result['error'])) {
-                        logInfo($logPath, sprintf(' (ID: %s)', $result['id']));
+                    if (isset($result[0]['id']) && !isset($result[0]['error'])) {
+                        logInfo($logPath, sprintf(' (ID: %s)', $result[0]['id']));
                     } else {
-                        logInfo($logPath, sprintf(' (Failed: "%s")', $result['error']));
+                        logInfo($logPath, sprintf(' (Failed: "%s")', $result[0]['error']));
                     }
                 } catch (\RuntimeException $exception) {
                     logInfo($logPath, sprintf(' (Failed: "%s")', $exception->getMessage()));
